@@ -4,11 +4,47 @@ import (
   "testing"
   "strings"
   "fmt"
+  "os"
 )
 
 func jsonToPoints(json string) int {
   receipt, _ := Parse(strings.NewReader(json))
   return receipt.Points()
+}
+
+func receiptFromFixture(path string) (Receipt, error) {
+	var receipt Receipt
+
+  file, err := os.Open(path)
+  if err != nil {
+    return receipt, err
+  }
+  defer file.Close()
+
+  receipt, err = Parse(file)
+  return receipt, err
+}
+
+func TestReadmeExamples(t *testing.T) {
+  testCases := map[string]int{
+    "receipt-with-whitespace": 28,
+    "receipt-with-repeated-items": 109,
+  }
+
+  for fname, expectedPoints := range testCases {
+    path := fmt.Sprintf("../examples/%s.json", fname)
+    receipt, err := receiptFromFixture(path)
+    if err != nil {
+      t.Errorf("Error reading fixture at \"%s\"", path)
+      continue
+    }
+
+    actualPoints := receipt.Points()
+
+    if (actualPoints != expectedPoints) {
+      t.Errorf("Expected extra points for \"%s\" to be %v, but got %v", fname, expectedPoints, actualPoints)
+    }
+  }
 }
 
 func TestRoundTotal(t *testing.T) {
