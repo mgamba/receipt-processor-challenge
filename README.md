@@ -1,3 +1,40 @@
+# Hello
+
+## running
+there's a makefile to run things
+
+`make run` will run `go run main.go` (on `0.0.0.0:3333`)
+
+`make t` will run `go test ./... -v`
+
+there's a Dockerfile/compose.yml but they're not necessary
+
+## decisions decisions decisions...
+
+here are the high-level tradeoffs:
+- focused on getting it right vs. overbuilding
+- stayed with stdlib vs. external libs (except for uuids)
+- added a router to make testing easy
+- plenty of error checking, but expectation is that incoming json is well-formatted
+- focused on testing vs over-abstracting
+
+next steps just for personal style/fun, given that there's no other driving reason (eg. stakeholder, market):
+- dry up the integration specs
+- add a tiny middleware stack, similar in simplicity to the router
+- abstract little things
+  - for example, the fixture parsing at the top of the receipt unit tests
+  - would like to do cleanups like that in other places
+- move the request logic to a controller
+  - there's really no need
+  - but if this thing grew a bit more i'd like to have main.go focus on directing traffic
+- the uuid generator should be with the receipt logic
+- would be fun to play around with different ways to generate the point total
+  - i kept it focused on simple/working, but sky's the limit with creativity there
+- add env parsing so things like host/port can be overridden
+  - i did parse mode at one point to change routing behavior based on prod/dev/test
+  - but it felt like overkill given the scope of the project
+  - and i really like the simplicity of initRouter(), given that it's a vanilla project
+
 # Receipt Processor
 
 Build a webservice that fulfils the documented API. The API is described below. A formal definition is provided 
