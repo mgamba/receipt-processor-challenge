@@ -51,8 +51,9 @@ func(r Receipt) retailer_name_points() (int) {
 
 // 50 points if the total is a round dollar amount with no cents.
 func(r Receipt) cents_points() (int) {
-  re, _ := regexp.Compile("^\\d+\\.(\\d{2})$")
-  cents := re.FindStringSubmatch(r.Total)[0]
+  re := regexp.MustCompile(`^(?P<Dollars>\d+)\.(?P<Cents>\d{2})$`)
+  matches := re.FindStringSubmatch(r.Total)
+  cents := matches[re.SubexpIndex("Cents")]
   if (cents == "00") {
     return 50
   } else {
@@ -62,8 +63,9 @@ func(r Receipt) cents_points() (int) {
 
 // 25 points if the total is a multiple of 0.25.
 func(r Receipt) total_mult_points() (int) {
-  re, _ := regexp.Compile("^\\d+\\.(\\d{2})$")
-  cents := re.FindStringSubmatch(r.Total)[0]
+  re := regexp.MustCompile(`^(?P<Dollars>\d+)\.(?P<Cents>\d{2})$`)
+  matches := re.FindStringSubmatch(r.Total)
+  cents := matches[re.SubexpIndex("Cents")]
   switch cents {
   case "00", "25", "50", "75":
     return 25
@@ -89,6 +91,7 @@ func(r Receipt) item_description_points() (int) {
       result += int(math.Ceil(price * multiplier))
     }
   }
+
   return result
 }
 
@@ -100,8 +103,8 @@ func(r Receipt) odd_day_points() (int) {
 
 // 10 points if the time of purchase is after 2:00pm and before 4:00pm.
 func(r Receipt) afternoon_points() (int) {
-  hour := r.PurchaseTime[0:1]
-  if (hour == "14" || hour == "15") { // assume 2pm means some time after 2
+  hour := r.PurchaseTime[:2]
+  if (hour == "14" || hour == "15") { // inclusive of 2pm and exclusive of 4pm
     return 10
   }
   return 0

@@ -27,7 +27,7 @@ func TestPostReceipt(t *testing.T) {
     t.Errorf("Error: %v", err)
   }
 
-  expected := `{"id":"bdf833c5-a299-50ef-af8a-7642b2b3a546"}`
+  expected := `{"id":"42dbc4e2-671a-556e-849d-89c1390b6647"}`
   if string(data) != expected {
     t.Errorf("Expected %s but got %v", expected, string(data))
   }

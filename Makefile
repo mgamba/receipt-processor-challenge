@@ -14,4 +14,4 @@ shell:
 	docker compose run --rm -it -v `pwd`\:/usr/src/app -p 3333\:3333 api /bin/sh
 
 t:
-	go test
+	go test ./... -v
